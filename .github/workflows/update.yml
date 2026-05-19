@@ -2,7 +2,7 @@ name: 🔄 Auto Update Subscriptions
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Каждый час
+    - cron: '*/10 * * * *'  # Каждые 10 минут
   workflow_dispatch:  # Ручной запуск
 
 permissions:
