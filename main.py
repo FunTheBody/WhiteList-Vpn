@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 🔗 Proxy Subscription Merger
-Объединяет подписки, переименовывает узлы, добавляет флаги стран
-ФИЛЬТРУЕТ метаданные подписок (#profile-*, #announce и т.д.)
+Объединяет подписки с ПРАВИЛЬНЫМ переименованием
 """
 
 import base64
@@ -23,27 +22,32 @@ SUBSCRIPTIONS = [
         "url": "https://key.prosvet.best/sub",
         "name_prefix": "⚪ Обход белых списков",
         "flag_priority": False
+    },
+    {
+        "url": "https://raw.githubusercontent.com/likzil/vless1/main/Treetcpvpn",
+        "name_prefix": "🔒 Обход черных списков",
+        "flag_priority": True
     }
 ]
 
 # 🌍 Словарь флагов
 COUNTRY_FLAGS = {
-    'RU': '🇷🇺', 'UA': '🇺🇦', 'BY': '🇧🇾', 'KZ': '🇰🇿', 'GE': '🇬🇪',
-    'DE': '🇩🇪', 'US': '🇺🇸', 'GB': '🇬🇧', 'NL': '🇳🇱', 'FR': '🇫🇷',
-    'PL': '🇵🇱', 'TR': '🇹🇷', 'CN': '🇨🇳', 'JP': '🇯🇵', 'SG': '🇸🇬',
-    'KR': '🇰🇷', 'IN': '🇮🇳', 'BR': '🇧🇷', 'CA': '🇨🇦', 'AU': '🇦🇺',
-    'IT': '🇮🇹', 'ES': '🇪🇸', 'SE': '🇸🇪', 'NO': '🇳🇴', 'FI': '🇫🇮',
+    'RU': '🇷🇺', 'UA': '🇺🇦', 'BY': '🇧', 'KZ': '🇰🇿', 'GE': '🇬🇪',
+    'DE': '🇩', 'US': '🇸', 'GB': '🇬🇧', 'NL': '🇳🇱', 'FR': '🇫',
+    'PL': '🇵🇱', 'TR': '🇹🇷', 'CN': '🇨', 'JP': '🇵', 'SG': '🇸🇬',
+    'KR': '🇰🇷', 'IN': '🇮🇳', 'BR': '🇧🇷', 'CA': '🇨🇦', 'AU': '🇦',
+    'IT': '🇮🇹', 'ES': '🇪🇸', 'SE': '🇸', 'NO': '🇴', 'FI': '🇫🇮',
     'CH': '🇨🇭', 'AT': '🇦🇹', 'BE': '🇧🇪', 'CZ': '🇨🇿', 'RO': '🇷🇴',
-    'MD': '🇲🇩', 'LT': '🇱🇹', 'LV': '🇱🇻', 'EE': '🇪🇪', 'AZ': '🇦🇿',
+    'MD': '🇲🇩', 'LT': '🇱🇹', 'LV': '🇱', 'EE': '🇪', 'AZ': '🇦🇿',
     'AM': '🇦🇲', 'UZ': '🇺🇿', 'KG': '🇰🇬', 'TJ': '🇹🇯', 'MN': '🇲🇳',
-    'VN': '🇻🇳', 'TH': '🇹🇭', 'MY': '🇲🇾', 'ID': '🇮🇩', 'PH': '🇵🇭',
+    'VN': '🇻🇳', 'TH': '🇹🇭', 'MY': '🇲🇾', 'ID': '🇮', 'PH': '🇭',
     'HK': '🇭🇰', 'TW': '🇹🇼', 'MO': '🇲🇴', 'IL': '🇮🇱', 'AE': '🇦🇪',
-    'SA': '🇸🇦', 'EG': '🇪🇬', 'ZA': '🇿🇦', 'NG': '🇳🇬', 'KE': '🇰🇪',
-    'AR': '🇦🇷', 'CL': '🇨🇱', 'CO': '🇨🇴', 'MX': '🇲🇽', 'PE': '🇵🇪',
-    'VE': '🇻🇪', 'GR': '🇬🇷', 'PT': '🇵🇹', 'IE': '🇮🇪', 'DK': '🇩🇰',
-    'IS': '🇮🇸', 'LU': '🇱🇺', 'MT': '🇲🇹', 'CY': '🇨🇾', 'SK': '🇸🇰',
+    'SA': '🇸🇦', 'EG': '🇪🇬', 'ZA': '🇿', 'NG': '🇬', 'KE': '🇰🇪',
+    'AR': '🇦', 'CL': '🇱', 'CO': '🇨🇴', 'MX': '🇲🇽', 'PE': '🇵🇪',
+    'VE': '🇻🇪', 'GR': '🇬🇷', 'PT': '🇵🇹', 'IE': '🇮', 'DK': '🇰',
+    'IS': '🇮🇸', 'LU': '🇱🇺', 'MT': '🇲', 'CY': '🇾', 'SK': '🇸🇰',
     'SI': '🇸🇮', 'HR': '🇭🇷', 'BG': '🇧🇬', 'RS': '🇷🇸', 'BA': '🇧🇦',
-    'MK': '🇲🇰', 'AL': '🇦🇱', 'ME': '🇲🇪', 'XK': '🇽🇰', 'UNKNOWN': '🌐'
+    'MK': '🇲🇰', 'AL': '🇦🇱', 'ME': '🇲', 'XK': '🇰', 'UNKNOWN': '🌐'
 }
 
 # 🔍 Паттерны стран
@@ -68,21 +72,13 @@ COUNTRY_PATTERNS = {
     'IT': [r'it\b', r'italy', r'italian', r'rome', r'milan', r'\.it\b'],
 }
 
-# 🗑️ Паттерны метаданных, которые нужно ФИЛЬТРОВАТЬ
 METADATA_PATTERNS = [
-    r'^#profile-',
-    r'^#announce:',
-    r'^#subscription-userinfo:',
-    r'^#support-url:',
-    r'^#profile-web-page-url:',
-    r'^#profile-update-interval:',
-    r'^#⚙️',
-    r'^# 🔄',
+    r'^#profile-', r'^#announce:', r'^#subscription-userinfo:',
+    r'^#support-url:', r'^#profile-web-page-url:', r'^#profile-update-interval:',
 ]
 
 
 def decode_base64_safe(data: str) -> str:
-    """Безопасное декодирование base64"""
     missing_padding = len(data) % 4
     if missing_padding:
         data += '=' * (4 - missing_padding)
@@ -93,29 +89,15 @@ def decode_base64_safe(data: str) -> str:
 
 
 def is_proxy_link(line: str) -> bool:
-    """Проверяет, является ли строка прокси-ссылкой (а не метаданными)"""
     line = line.strip()
     if not line or line.startswith('#'):
         return False
-    # Проверяем начало на известные протоколы
     proxy_prefixes = ('vmess://', 'vless://', 'trojan://', 'ss://', 'ssr://', 
-                      'hysteria://', 'hysteria2://', 'tuic://', 'hy2://', 'wireguard://')
+                      'hysteria://', 'hysteria2://', 'tuic://', 'hy2://')
     return any(line.lower().startswith(prefix) for prefix in proxy_prefixes)
 
 
-def is_metadata_line(line: str) -> bool:
-    """Проверяет, является ли строка метаданными подписки"""
-    line = line.strip()
-    if not line.startswith('#'):
-        return False
-    for pattern in METADATA_PATTERNS:
-        if re.match(pattern, line, re.I):
-            return True
-    return False
-
-
 def detect_country_flag(node_name: str, node_url: str = "") -> str:
-    """Определяет флаг страны"""
     text = (node_name + " " + node_url).lower()
     for country, patterns in COUNTRY_PATTERNS.items():
         for pattern in patterns:
@@ -125,7 +107,6 @@ def detect_country_flag(node_name: str, node_url: str = "") -> str:
 
 
 def parse_proxy_link(link: str) -> dict:
-    """Парсит ссылку прокси"""
     link = link.strip()
     if not link or not is_proxy_link(link):
         return None
@@ -181,23 +162,20 @@ def parse_proxy_link(link: str) -> dict:
 
 
 def fetch_subscription(url: str) -> list:
-    """Загружает подписку и возвращает ТОЛЬКО прокси-ссылки"""
     headers = {'User-Agent': 'ClashMetaForAndroid/2.11.2 Meta'}
     try:
         response = requests.get(url, headers=headers, timeout=30)
         response.raise_for_status()
         content = response.text.strip()
         
-        # Декодируем если нужно
         if not any(content.startswith(p) for p in ('vmess://', 'vless://', 'trojan://', 'ss://', '{')):
             try:
                 content = decode_base64_safe(content)
             except:
                 pass
         
-        # Разбиваем на строки и ФИЛЬТРУЕМ
         lines = [line.strip() for line in content.split('\n') if line.strip()]
-        proxy_links = [line for line in lines if is_proxy_link(line) and not is_metadata_line(line)]
+        proxy_links = [line for line in lines if is_proxy_link(line) and not any(re.match(p, line, re.I) for p in METADATA_PATTERNS)]
         
         return proxy_links
     except Exception as e:
@@ -206,33 +184,35 @@ def fetch_subscription(url: str) -> list:
 
 
 def rename_proxy_link(original_link: str, new_name: str, proxy_type: str) -> str:
-    """Переименовывает узел"""
+    """Полностью ЗАМЕНЯЕТ имя на новое"""
     try:
         if proxy_type == 'vmess':
             import json
             config = json.loads(decode_base64_safe(original_link[8:]))
-            config['ps'] = new_name
+            config['ps'] = new_name  # Полная замена имени
             new_b64 = base64.b64encode(json.dumps(config, ensure_ascii=False).encode('utf-8')).decode().rstrip('=')
             return f"vmess://{new_b64}"
             
         elif proxy_type in ['vless', 'trojan', 'hysteria', 'tuic']:
+            # Полная замена fragment (имени после #)
             parsed = urlparse(original_link)
             from urllib.parse import urlunparse
-            return urlunparse(parsed._replace(fragment=new_name))
+            new_parsed = parsed._replace(fragment=new_name)  # ЗАМЕНЯЕМ полностью
+            return urlunparse(new_parsed)
             
         elif proxy_type == 'shadowsocks':
             if '#' in original_link:
                 base, _ = original_link.rsplit('#', 1)
-                return f"{base}#{new_name}"
-            return original_link
+                return f"{base}#{new_name}"  # ЗАМЕНЯЕМ имя после #
+            return f"{original_link}#{new_name}"
         return original_link
-    except:
+    except Exception as e:
+        print(f"⚠️ Ошибка переименования: {e}")
         return original_link
 
 
 def process_subscription(url: str, name_prefix: str, flag_priority: bool) -> list:
-    """Обрабатывает подписку"""
-    print(f"📥 Загрузка: {url[:50]}...")
+    print(f"📥 Загрузка: {url[:60]}...")
     links = fetch_subscription(url)
     
     processed = []
@@ -240,7 +220,8 @@ def process_subscription(url: str, name_prefix: str, flag_priority: bool) -> lis
         parsed = parse_proxy_link(link)
         if parsed and parsed.get('name'):
             flag = parsed['country_flag'] if flag_priority else ''
-            new_name = f"{flag} {name_prefix} | {parsed['name']}".strip()
+            # НОВОЕ ИМЯ: только префикс + флаг (БЕЗ старого имени)
+            new_name = f"{name_prefix} {flag}".strip()
             new_link = rename_proxy_link(link, new_name, parsed['type'])
             if new_link:
                 processed.append(new_link)
@@ -250,7 +231,6 @@ def process_subscription(url: str, name_prefix: str, flag_priority: bool) -> lis
 
 
 def merge_subscriptions() -> str:
-    """Основная функция"""
     print("🚀 Запуск...")
     print(f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("-" * 50)
@@ -265,7 +245,6 @@ def merge_subscriptions() -> str:
     
     result = '\n'.join(all_nodes)
     
-    # ✅ ТОЛЬКО наши заголовки, без мусора из подписок
     header = f"# 🔗 Merged by ProxyMerger\n"
     header += f"# 🔄 {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
     header += f"# 📦 {len(all_nodes)} nodes\n\n"
@@ -274,7 +253,6 @@ def merge_subscriptions() -> str:
 
 
 def save_to_file(content: str, filepath: str = "output/merged_sub.txt"):
-    """Сохраняет файл"""
     import os
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, 'w', encoding='utf-8') as f:
@@ -286,7 +264,6 @@ def main():
     try:
         result = merge_subscriptions()
         save_to_file(result)
-        # Base64 версия
         b64 = base64.b64encode(result.encode('utf-8')).decode()
         save_to_file(b64, "output/merged_sub_base64.txt")
         print("\n✨ Готово!")
