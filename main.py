@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-🔗 Proxy Subscription Merger - ВСЕ С ФЛАГАМИ
+🔗 Proxy Subscription Merger - С РАЗДЕЛИТЕЛЯМИ
 """
 
 import base64
@@ -16,67 +16,120 @@ SUBSCRIPTIONS = [
     {
         "url": "https://izzzyvpn.2bd.net/sub.php?token=S6aEMcA0GXGt9qw7odYs",
         "name_prefix": "🔒 Черные списки",
+        "group_name": "⬇️ОБХОД ЧЕРНЫХ СПИСКОВ⬇️"
     },
     {
         "url": "https://key.prosvet.best/sub",
         "name_prefix": "⚪ Белые списки",
+        "group_name": "⬇️ОБХОД БЕЛЫХ СПИСКОВ⬇️"
     },
     {
         "url": "https://raw.githubusercontent.com/likzil/vless1/main/Treetcpvpn",
         "name_prefix": "🔒 Черные списки",
+        "group_name": "⬇️ОБХОД ЧЕРНЫХ СПИСКОВ⬇️"
     }
 ]
 
-# 🌍 Словарь флагов
+# 🌍 Словарь флагов — ВСЕ ФЛАГИ
 COUNTRY_FLAGS = {
     'RU': '🇷🇺', 'UA': '🇺🇦', 'BY': '🇧', 'KZ': '🇿', 'GE': '🇬🇪',
-    'DE': '🇩', 'US': '🇸', 'GB': '🇬🇧', 'NL': '🇳🇱', 'FR': '🇫',
-    'PL': '🇵🇱', 'TR': '🇹🇷', 'CN': '🇨', 'JP': '🇵', 'SG': '🇸🇬',
-    'KR': '🇰', 'IN': '🇳', 'BR': '🇧🇷', 'CA': '🇨🇦', 'AU': '🇦🇺',
+    'DE': '🇩🇪', 'US': '🇺🇸', 'GB': '🇬', 'NL': '🇱', 'FR': '🇫🇷',
+    'PL': '🇵', 'TR': '🇷', 'CN': '🇨🇳', 'JP': '🇯🇵', 'SG': '🇸🇬',
+    'KR': '🇰🇷', 'IN': '🇮🇳', 'BR': '🇧', 'CA': '🇦', 'AU': '🇦🇺',
     'IT': '🇮🇹', 'ES': '🇪🇸', 'SE': '🇸', 'NO': '🇴', 'FI': '🇫🇮',
-    'CH': '🇨🇭', 'AT': '🇦🇹', 'BE': '🇧🇪', 'CZ': '🇨', 'RO': '🇴',
+    'CH': '🇨', 'AT': '🇹', 'BE': '🇧🇪', 'CZ': '🇨', 'RO': '🇴',
     'MD': '🇲🇩', 'LT': '🇱🇹', 'LV': '🇱', 'EE': '🇪', 'AZ': '🇦🇿',
-    'AM': '🇦🇲', 'UZ': '🇺', 'KG': '🇬', 'TJ': '🇹🇯', 'MN': '🇲🇳',
-    'VN': '🇻🇳', 'TH': '🇹🇭', 'MY': '🇲🇾', 'ID': '🇮🇩', 'PH': '🇵🇭',
-    'HK': '🇭🇰', 'TW': '🇹🇼', 'MO': '🇲🇴', 'IL': '🇮🇱', 'AE': '🇦🇪',
-    'SA': '🇸🇦', 'EG': '🇪🇬', 'ZA': '🇿', 'NG': '🇬', 'KE': '🇰🇪',
+    'AM': '🇦🇲', 'UZ': '🇺', 'KG': '🇬', 'TJ': '🇹', 'MN': '🇳',
+    'VN': '🇻🇳', 'TH': '🇹🇭', 'MY': '🇲', 'ID': '🇩', 'PH': '🇵🇭',
+    'HK': '🇭', 'TW': '🇼', 'MO': '🇲🇴', 'IL': '🇮🇱', 'AE': '🇦🇪',
+    'SA': '🇸🇦', 'EG': '🇪🇬', 'ZA': '🇿🇦', 'NG': '🇳🇬', 'KE': '🇰🇪',
     'AR': '🇦🇷', 'CL': '🇨🇱', 'CO': '🇨🇴', 'MX': '🇲🇽', 'PE': '🇵🇪',
     'VE': '🇻🇪', 'GR': '🇬🇷', 'PT': '🇵🇹', 'IE': '🇮🇪', 'DK': '🇩🇰',
     'IS': '🇮🇸', 'LU': '🇱🇺', 'MT': '🇲🇹', 'CY': '🇨', 'SK': '🇰',
-    'SI': '🇸🇮', 'HR': '🇭🇷', 'BG': '🇧', 'RS': '🇸', 'BA': '🇧🇦',
-    'MK': '🇲🇰', 'AL': '🇦🇱', 'ME': '🇲', 'XK': '🇰', 'UNKNOWN': '🌐'
+    'SI': '🇸', 'HR': '🇷', 'BG': '🇧🇬', 'RS': '🇷🇸', 'BA': '🇧🇦',
+    'MK': '🇲🇰', 'AL': '🇦🇱', 'ME': '🇲', 'XK': '🇰', 
+    'DEFAULT': '🌐'
 }
 
-# 🔍 Паттерны стран — РАСШИРЕННЫЕ
+# 🔍 Паттерны стран — МАКСИМАЛЬНО ПОЛНЫЕ
 COUNTRY_PATTERNS = {
-    'RU': [r'ru\b', r'moscow', r'moskva', r'spb', r'saint.petersburg', r'\.ru\b', r'russia', r'москва', r'питер', r'спб'],
-    'UA': [r'ua\b', r'kiev', r'kyiv', r'kharkiv', r'odessa', r'\.ua\b', r'ukraine', r'киев', r'харьков', r'одесса'],
-    'DE': [r'de\b', r'germany', r'frankfurt', r'berlin', r'munich', r'\.de\b', r'германия', r'франкфурт', r'берлин'],
-    'US': [r'us\b', r'usa', r'new.york', r'los.angeles', r'miami', r'\.us\b', r'united.states', r'нью.йорк', r'майами'],
-    'GB': [r'gb\b', r'uk\b', r'london', r'manchester', r'\.uk\b', r'\.co.uk\b', r'united.kingdom', r'лондон'],
-    'NL': [r'nl\b', r'netherlands', r'amsterdam', r'rotterdam', r'\.nl\b', r'амстердам', r'нидерланды'],
-    'FR': [r'fr\b', r'france', r'paris', r'marseille', r'\.fr\b', r'франция', r'париж'],
-    'PL': [r'pl\b', r'poland', r'warsaw', r'krakow', r'\.pl\b', r'польша', r'варшава'],
-    'TR': [r'tr\b', r'turkey', r'istanbul', r'ankara', r'\.tr\b', r'турция', r'стамбул'],
-    'CN': [r'cn\b', r'china', r'beijing', r'shanghai', r'\.cn\b', r'китай', r'пекин'],
-    'JP': [r'jp\b', r'japan', r'tokyo', r'osaka', r'\.jp\b', r'япония', r'токио'],
+    'RU': [r'ru\b', r'moscow', r'moskva', r'spb', r'saint.petersburg', r'\.ru\b', r'russia', r'москва', r'питер', r'спб', r'екатеринбург', r'новосибирск'],
+    'UA': [r'ua\b', r'kiev', r'kyiv', r'kharkiv', r'odessa', r'\.ua\b', r'ukraine', r'киев', r'харьков', r'одесса', r'львов', r'dnipro'],
+    'DE': [r'de\b', r'germany', r'frankfurt', r'berlin', r'munich', r'\.de\b', r'германия', r'франкфурт', r'берлин', r'hamburg', r'cologne'],
+    'US': [r'us\b', r'usa', r'new.york', r'los.angeles', r'miami', r'\.us\b', r'united.states', r'нью.йорк', r'майами', r'dallas', r'chicago', r'atlanta'],
+    'GB': [r'gb\b', r'uk\b', r'london', r'manchester', r'\.uk\b', r'\.co.uk\b', r'united.kingdom', r'лондон', r'great.britain'],
+    'NL': [r'nl\b', r'netherlands', r'amsterdam', r'rotterdam', r'\.nl\b', r'амстердам', r'нидерланды', r'hague'],
+    'FR': [r'fr\b', r'france', r'paris', r'marseille', r'\.fr\b', r'франция', r'париж', r'lyon'],
+    'PL': [r'pl\b', r'poland', r'warsaw', r'krakow', r'\.pl\b', r'польша', r'варшава', r'краков', r'gdansk'],
+    'TR': [r'tr\b', r'turkey', r'istanbul', r'ankara', r'\.tr\b', r'турция', r'стамбул', r'ankara', r'izmir'],
+    'CN': [r'cn\b', r'china', r'beijing', r'shanghai', r'\.cn\b', r'китай', r'пекин', r'гуанчжоу', r'shenzhen'],
+    'JP': [r'jp\b', r'japan', r'tokyo', r'osaka', r'\.jp\b', r'япония', r'токио', r'yokohama'],
     'SG': [r'sg\b', r'singapore', r'\.sg\b', r'сингапур'],
-    'KR': [r'kr\b', r'korea', r'seoul', r'\.kr\b', r'корея', r'сеул'],
-    'KZ': [r'kz\b', r'kazakhstan', r'almaty', r'astana', r'\.kz\b', r'казахстан', r'алматы', r'астана'],
-    'BY': [r'by\b', r'belarus', r'minsk', r'\.by\b', r'беларусь', r'минск'],
-    'GE': [r'ge\b', r'georgia', r'tbilisi', r'\.ge\b', r'грузия', r'тбилиси'],
-    'FI': [r'fi\b', r'finland', r'helsinki', r'\.fi\b', r'финляндия', r'хельсинки'],
-    'IT': [r'it\b', r'italy', r'italian', r'rome', r'milan', r'\.it\b', r'италия', r'рим', r'милан'],
-    'ES': [r'es\b', r'spain', r'madrid', r'barcelona', r'\.es\b', r'испания', r'мадрид'],
-    'SE': [r'se\b', r'sweden', r'stockholm', r'\.se\b', r'швеция', r'стокгольм'],
-    'CA': [r'ca\b', r'canada', r'toronto', r'vancouver', r'\.ca\b', r'канада', r'торонто'],
-    'AU': [r'au\b', r'australia', r'sydney', r'melbourne', r'\.au\b', r'австралия', r'сидней'],
-    'BR': [r'br\b', r'brazil', r'sao.paulo', r'\.br\b', r'бразилия'],
-    'IN': [r'in\b', r'india', r'mumbai', r'delhi', r'\.in\b', r'индия', r'мумбаи'],
-    'AE': [r'ae\b', r'uae', r'dubai', r'\.ae\b', r'оаэ', r'дубай'],
-    'IL': [r'il\b', r'israel', r'tel.aviv', r'\.il\b', r'израиль', r'тель.авив'],
-    'RO': [r'ro\b', r'romania', r'bucharest', r'\.ro\b', r'румыния', r'бухарест'],
-    'MD': [r'md\b', r'moldova', r'chisinau', r'\.md\b', r'молдова', r'кишинев'],
+    'KR': [r'kr\b', r'korea', r'seoul', r'\.kr\b', r'корея', r'сеул', r'busan'],
+    'KZ': [r'kz\b', r'kazakhstan', r'almaty', r'astana', r'\.kz\b', r'казахстан', r'алматы', r'астана', r'shymkent'],
+    'BY': [r'by\b', r'belarus', r'minsk', r'\.by\b', r'беларусь', r'минск', r'gomel'],
+    'GE': [r'ge\b', r'georgia', r'tbilisi', r'\.ge\b', r'грузия', r'тбилиси', r'kutaisi'],
+    'FI': [r'fi\b', r'finland', r'helsinki', r'\.fi\b', r'финляндия', r'хельсинки', r'tampere'],
+    'IT': [r'it\b', r'italy', r'italian', r'rome', r'milan', r'\.it\b', r'италия', r'рим', r'милан', r'naples'],
+    'ES': [r'es\b', r'spain', r'madrid', r'barcelona', r'\.es\b', r'испания', r'мадрид', r'валенсия'],
+    'SE': [r'se\b', r'sweden', r'stockholm', r'\.se\b', r'швеция', r'стокгольм', r'gothenburg'],
+    'CA': [r'ca\b', r'canada', r'toronto', r'vancouver', r'\.ca\b', r'канада', r'торонто', r'montreal'],
+    'AU': [r'au\b', r'australia', r'sydney', r'melbourne', r'\.au\b', r'австралия', r'сидней', r'brisbane'],
+    'BR': [r'br\b', r'brazil', r'sao.paulo', r'\.br\b', r'бразилия', r'сао.паулу', r'riodejaneiro'],
+    'IN': [r'in\b', r'india', r'mumbai', r'delhi', r'\.in\b', r'индия', r'мумбаи', r'дели', r'bangalore'],
+    'AE': [r'ae\b', r'uae', r'dubai', r'\.ae\b', r'оаэ', r'дубай', r'abudhabi'],
+    'IL': [r'il\b', r'israel', r'tel.aviv', r'\.il\b', r'израиль', r'тель.авив', r'jerusalem'],
+    'RO': [r'ro\b', r'romania', r'bucharest', r'\.ro\b', r'румыния', r'бухарест', r'cluj'],
+    'MD': [r'md\b', r'moldova', r'chisinau', r'\.md\b', r'молдова', r'кишинев', r'balti'],
+    'CZ': [r'cz\b', r'czech', r'prague', r'\.cz\b', r'чехия', r'прага', r'brno'],
+    'AT': [r'at\b', r'austria', r'vienna', r'\.at\b', r'австрия', r'вена', r'salzburg'],
+    'CH': [r'ch\b', r'switzerland', r'zurich', r'\.ch\b', r'швейцария', r'цюрих', r'geneva'],
+    'BE': [r'be\b', r'belgium', r'brussels', r'\.be\b', r'бельгия', r'брюссель', r'antwerp'],
+    'PT': [r'pt\b', r'portugal', r'lisbon', r'\.pt\b', r'португалия', r'лиссабон', r'porto'],
+    'GR': [r'gr\b', r'greece', r'athens', r'\.gr\b', r'греция', r'афины', r'thessaloniki'],
+    'BG': [r'bg\b', r'bulgaria', r'sofia', r'\.bg\b', r'болгария', r'софия', r'plovdiv'],
+    'RS': [r'rs\b', r'serbia', r'belgrade', r'\.rs\b', r'сербия', r'белград', r'novisad'],
+    'HR': [r'hr\b', r'croatia', r'zagreb', r'\.hr\b', r'хорватия', r'загреб', r'split'],
+    'SK': [r'sk\b', r'slovakia', r'bratislava', r'\.sk\b', r'словакия', r'братислава', r'kosice'],
+    'HU': [r'hu\b', r'hungary', r'budapest', r'\.hu\b', r'венгрия', r'будапешт', r'debrecen'],
+    'LT': [r'lt\b', r'lithuania', r'vilnius', r'\.lt\b', r'литва', r'вильнюс', r'kaunas'],
+    'LV': [r'lv\b', r'latvia', r'riga', r'\.lv\b', r'латвия', r'рига', r'daugavpils'],
+    'EE': [r'ee\b', r'estonia', r'tallinn', r'\.ee\b', r'эстония', r'таллин', r'tartu'],
+    'AZ': [r'az\b', r'azerbaijan', r'baku', r'\.az\b', r'азербайджан', r'баку', r'ganja'],
+    'AM': [r'am\b', r'armenia', r'yerevan', r'\.am\b', r'армения', r'ереван', r'gyumri'],
+    'UZ': [r'uz\b', r'uzbekistan', r'tashkent', r'\.uz\b', r'узбекистан', r'ташкент', r'samarkand'],
+    'KG': [r'kg\b', r'kyrgyzstan', r'bishkek', r'\.kg\b', r'киргизия', r'бишкек', r'osh'],
+    'TJ': [r'tj\b', r'tajikistan', r'dushanbe', r'\.tj\b', r'таджикистан', r'душанбе', r'khujand'],
+    'MN': [r'mn\b', r'mongolia', r'ulaanbaatar', r'\.mn\b', r'монголия', r'улан.батор', r'erdenet'],
+    'VN': [r'vn\b', r'vietnam', r'hanoi', r'ho.chi.minh', r'\.vn\b', r'вьетнам', r'ханой', r'saigon'],
+    'TH': [r'th\b', r'thailand', r'bangkok', r'\.th\b', r'таиланд', r'бангкок', r'chiangmai'],
+    'MY': [r'my\b', r'malaysia', r'kualalumpur', r'\.my\b', r'малайзия', r'куала.лумпур', r'johor'],
+    'ID': [r'id\b', r'indonesia', r'jakarta', r'\.id\b', r'индонезия', r'джакарта', r'surabaya'],
+    'PH': [r'ph\b', r'philippines', r'manila', r'\.ph\b', r'филиппины', r'манила', r'cebu'],
+    'HK': [r'hk\b', r'hongkong', r'hk\b', r'\.hk\b', r'гонконг', r'коулун'],
+    'TW': [r'tw\b', r'taiwan', r'taipei', r'\.tw\b', r'тайвань', r'тайбэй', r'kaohsiung'],
+    'SA': [r'sa\b', r'saudiarabia', r'riyadh', r'\.sa\b', r'саудовская.аравия', r'эр.рияд', r'jeddah'],
+    'EG': [r'eg\b', r'egypt', r'cairo', r'\.eg\b', r'египет', r'каир', r'alexandria'],
+    'ZA': [r'za\b', r'southafrica', r'capetown', r'johannesburg', r'\.za\b', r'юар', r'кейптаун', r'йоханнесбург'],
+    'NG': [r'ng\b', r'nigeria', r'lagos', r'\.ng\b', r'нигерия', r'лагос', r'abuja'],
+    'KE': [r'ke\b', r'kenya', r'nairobi', r'\.ke\b', r'кения', r'найроби', r'mombasa'],
+    'AR': [r'ar\b', r'argentina', r'buenosaires', r'\.ar\b', r'аргентина', r'буэнос.айрес', r'cordoba'],
+    'CL': [r'cl\b', r'chile', r'santiago', r'\.cl\b', r'чили', r'сантьяго', r'valparaiso'],
+    'CO': [r'co\b', r'colombia', r'bogota', r'\.co\b', r'колумбия', r'богота', r'medellin'],
+    'MX': [r'mx\b', r'mexico', r'mexicocity', r'\.mx\b', r'мексика', r'мехико', r'guadalajara'],
+    'PE': [r'pe\b', r'peru', r'lima', r'\.pe\b', r'перу', r'лима', r'cusco'],
+    'VE': [r've\b', r'venezuela', r'caracas', r'\.ve\b', r'венесуэла', r'каракас', r'maracaibo'],
+    'IE': [r'ie\b', r'ireland', r'dublin', r'\.ie\b', r'ирландия', r'дублин', r'cork'],
+    'DK': [r'dk\b', r'denmark', r'copenhagen', r'\.dk\b', r'дания', r'копенгаген', r'aarhus'],
+    'NO': [r'no\b', r'norway', r'oslo', r'\.no\b', r'норвегия', r'осло', r'bergen'],
+    'IS': [r'is\b', r'iceland', r'reykjavik', r'\.is\b', r'исландия', r'рейкьявик', r'akureyri'],
+    'LU': [r'lu\b', r'luxembourg', r'luxembourg', r'\.lu\b', r'люксембург'],
+    'MT': [r'mt\b', r'malta', r'valletta', r'\.mt\b', r'мальта', r'валлетта'],
+    'CY': [r'cy\b', r'cyprus', r'nicosia', r'\.cy\b', r'кипр', r'никосия', r'limassol'],
+    'BA': [r'ba\b', r'bosnia', r'sarajevo', r'\.ba\b', r'босния', r'сараево', r'banjaluka'],
+    'AL': [r'al\b', r'albania', r'tirana', r'\.al\b', r'албания', r'тирана', r'durres'],
+    'ME': [r'me\b', r'montenegro', r'podgorica', r'\.me\b', r'черногория', r'подгорица', r'budva'],
+    'XK': [r'xk\b', r'kosovo', r'pristina', r'\.xk\b', r'косово', r'приштина'],
 }
 
 METADATA_PATTERNS = [
@@ -105,8 +158,8 @@ def is_proxy_link(line: str) -> bool:
 
 
 def detect_country_flag(node_name: str, node_url: str = "", host: str = "") -> str:
-    """Улучшенное определение страны — ТЕПЕРЬ ДЛЯ ВСЕХ"""
-    # Объединяем всю доступную информацию
+    """Улучшенное определение флага — ТЕПЕРЬ ТОЧНО ДЛЯ ВСЕХ"""
+    # Объединяем всю информацию
     text = f"{node_name} {node_url} {host}".lower()
     
     # 1. Ищем по паттернам
@@ -117,33 +170,54 @@ def detect_country_flag(node_name: str, node_url: str = "", host: str = "") -> s
                 if flag:
                     return flag
     
-    # 2. Ищем по домену верхнего уровня
+    # 2. Ищем по TLD домена
     if host:
-        domain_match = re.search(r'\.([a-z]{2})(?::|/|$|\s)', host.lower())
+        # Извлекаем домен
+        domain_match = re.search(r'([a-z0-9.-]+)', host.lower())
         if domain_match:
-            tld = domain_match.group(1).upper()
-            flag = COUNTRY_FLAGS.get(tld)
-            if flag:
-                return flag
-    
-    # 3. Проверяем IP на начало (для некоторых стран)
-    if host:
-        ip_patterns = {
-            r'^185\.\d+\.\d+': 'NL',  # Нидерланды часто
-            r'^31\.\d+\.\d+': 'NL',
-            r'^5\.\d+\.\d+': 'RU',    # Россия
-            r'^77\.\d+\.\d+': 'RU',
-            r'^85\.\d+\.\d+': 'DE',   # Германия
-            r'^95\.\d+\.\d+': 'RU',
-        }
-        for pattern, country in ip_patterns.items():
-            if re.match(pattern, host):
-                flag = COUNTRY_FLAGS.get(country)
+            domain = domain_match.group(1)
+            # Проверяем TLD
+            tld_match = re.search(r'\.([a-z]{2,3})$', domain)
+            if tld_match:
+                tld = tld_match.group(1).upper()
+                flag = COUNTRY_FLAGS.get(tld)
                 if flag:
                     return flag
+            
+            # Проверяем весь домен
+            for country in COUNTRY_PATTERNS.keys():
+                if country.lower() in domain:
+                    flag = COUNTRY_FLAGS.get(country)
+                    if flag:
+                        return flag
     
-    # 4. Если ничего не нашли — возвращаем глобус
-    return '🌐'
+    # 3. Проверяем по IP диапазонам
+    if host:
+        ip_match = re.match(r'^(\d{1,3})\.(\d{1,3})', host)
+        if ip_match:
+            first_octet = int(ip_match.group(1))
+            second_octet = int(ip_match.group(2))
+            
+            # Примерные диапазоны
+            if first_octet == 5 or first_octet == 31 or first_octet == 46:
+                if second_octet in range(0, 256):
+                    return '🇷🇺'  # Россия
+            elif first_octet == 85 or first_octet == 88 or first_octet == 91:
+                return '🇩🇪'  # Германия
+            elif first_octet == 185 or first_octet == 31:
+                return '🇳🇱'  # Нидерланды
+            elif first_octet == 104 or first_octet == 172:
+                return '🇺🇸'  # США (Cloudflare и др.)
+    
+    # 4. Если ничего не нашли — пробуем угадать по первым буквам
+    if node_name:
+        name_lower = node_name.lower()
+        for country_code, flag in COUNTRY_FLAGS.items():
+            if country_code.lower() in name_lower[:20]:  # Проверяем первые 20 символов
+                return flag
+    
+    # 5. Возвращаем глобус если ничего не нашли
+    return COUNTRY_FLAGS['DEFAULT']
 
 
 def get_protocol_info(link: str, proxy_type: str) -> str:
@@ -248,22 +322,22 @@ def get_server_location(host: str) -> str:
     
     locations = {
         'moscow': 'Москва', 'msk': 'Москва', 'spb': 'Питер', 'piter': 'Питер', 'saint.petersburg': 'Питер',
-        'frankfurt': 'Франкфурт', 'berlin': 'Берлин', 'munich': 'Мюнхен',
+        'frankfurt': 'Франкфурт', 'berlin': 'Берлин', 'munich': 'Мюнхен', 'hamburg': 'Гамбург',
         'amsterdam': 'Амстердам', 'rotterdam': 'Роттердам',
         'london': 'Лондон', 'manchester': 'Манчестер',
-        'paris': 'Париж', 'marseille': 'Марсель',
+        'paris': 'Париж', 'marseille': 'Марсель', 'lyon': 'Лион',
         'warsaw': 'Варшава', 'krakow': 'Краков',
         'istanbul': 'Стамбул', 'ankara': 'Анкара',
         'tokyo': 'Токио', 'osaka': 'Осака',
         'singapore': 'Сингапур',
-        'new.york': 'Нью-Йорк', 'los.angeles': 'Лос-Анджелес', 'miami': 'Майами', 'dallas': 'Даллас',
+        'new.york': 'Нью-Йорк', 'los.angeles': 'Лос-Анджелес', 'miami': 'Майами', 'dallas': 'Даллас', 'chicago': 'Чикаго',
         'finland': 'Финляндия', 'helsinki': 'Хельсинки',
         'italy': 'Италия', 'rome': 'Рим', 'milan': 'Милан',
         'netherlands': 'Нидерланды',
         'germany': 'Германия',
         'poland': 'Польша',
         'turkey': 'Турция',
-        'ukraine': 'Украина', 'kiev': 'Киев', 'kyiv': 'Киев', 'kharkiv': 'Харьков',
+        'ukraine': 'Украина', 'kiev': 'Киев', 'kyiv': 'Киев', 'kharkiv': 'Харьков', 'odessa': 'Одесса',
         'kazakhstan': 'Казахстан', 'almaty': 'Алматы', 'astana': 'Астана',
         'belarus': 'Беларусь', 'minsk': 'Минск',
         'georgia': 'Грузия', 'tbilisi': 'Тбилиси',
@@ -277,6 +351,40 @@ def get_server_location(host: str) -> str:
         'israel': 'Израиль', 'telaviv': 'Тель-Авив',
         'romania': 'Румыния', 'bucharest': 'Бухарест',
         'moldova': 'Молдова', 'chisinau': 'Кишинев',
+        'czech': 'Чехия', 'prague': 'Прага',
+        'austria': 'Австрия', 'vienna': 'Вена',
+        'switzerland': 'Швейцария', 'zurich': 'Цюрих',
+        'belgium': 'Бельгия', 'brussels': 'Брюссель',
+        'portugal': 'Португалия', 'lisbon': 'Лиссабон',
+        'greece': 'Греция', 'athens': 'Афины',
+        'bulgaria': 'Болгария', 'sofia': 'София',
+        'serbia': 'Сербия', 'belgrade': 'Белград',
+        'croatia': 'Хорватия', 'zagreb': 'Загреб',
+        'slovakia': 'Словакия', 'bratislava': 'Братислава',
+        'hungary': 'Венгрия', 'budapest': 'Будапешт',
+        'lithuania': 'Литва', 'vilnius': 'Вильнюс',
+        'latvia': 'Латвия', 'riga': 'Рига',
+        'estonia': 'Эстония', 'tallinn': 'Таллин',
+        'azerbaijan': 'Азербайджан', 'baku': 'Баку',
+        'armenia': 'Армения', 'yerevan': 'Ереван',
+        'uzbekistan': 'Узбекистан', 'tashkent': 'Ташкент',
+        'kyrgyzstan': 'Киргизия', 'bishkek': 'Бишкек',
+        'tajikistan': 'Таджикистан', 'dushanbe': 'Душанбе',
+        'mongolia': 'Монголия', 'ulaanbaatar': 'Улан-Батор',
+        'vietnam': 'Вьетнам', 'hanoi': 'Ханой',
+        'thailand': 'Таиланд', 'bangkok': 'Бангкок',
+        'malaysia': 'Малайзия', 'kualalumpur': 'Куала-Лумпур',
+        'indonesia': 'Индонезия', 'jakarta': 'Джакарта',
+        'philippines': 'Филиппины', 'manila': 'Манила',
+        'hongkong': 'Гонконг', 'kualalumpur': 'Куала-Лумпур',
+        'taiwan': 'Тайвань', 'taipei': 'Тайбэй',
+        'south.korea': 'Южная Корея', 'seoul': 'Сеул',
+        'japan': 'Япония', 'tokyo': 'Токио',
+        'china': 'Китай', 'beijing': 'Пекин', 'shanghai': 'Шанхай',
+        'russia': 'Россия', 'moscow': 'Москва',
+        'united.states': 'США', 'newyork': 'Нью-Йорк',
+        'united.kingdom': 'Великобритания', 'london': 'Лондон',
+        'france': 'Франция', 'paris': 'Париж',
     }
     
     for key, value in locations.items():
@@ -350,7 +458,7 @@ def parse_proxy_link(link: str) -> dict:
     except Exception as e:
         result['name'] = f"Error-{hash(link) % 10000}"
     
-    # 🔥 ВАЖНО: Всегда определяем флаг для ВСЕХ серверов!
+    # 🔥 ВСЕГДА определяем флаг
     result['country_flag'] = detect_country_flag(result['name'], link, result['host'])
     result['server_location'] = get_server_location(result['host'])
     
@@ -431,15 +539,28 @@ def format_proxy_name(prefix: str, flag: str, protocol: str, location: str = "")
         return f"{flag} {prefix} | {protocol}"
 
 
-def process_subscription(url: str, name_prefix: str) -> list:
+def create_group_header(group_name: str, total_servers: int = 0) -> str:
+    """Создает заголовок группы серверов (разделитель)"""
+    # Создаем специальный комментарий-разделитель
+    return f"# {group_name} ({total_servers} серверов)"
+
+
+def process_subscription(url: str, name_prefix: str, group_name: str, is_first_group: bool = False) -> list:
     print(f"📥 {url[:60]}...")
     links = fetch_subscription(url)
     
     processed = []
+    
+    # Если это первая группа, добавляем заголовок
+    if is_first_group:
+        # Создаем "разделитель" как первый элемент
+        # Используем специальный vless:// с dummy данными
+        header_link = f"vless://00000000-0000-0000-0000-000000000000@none.none:443#{group_name}"
+        processed.append(header_link)
+    
     for link in links:
         parsed = parse_proxy_link(link)
         if parsed and parsed.get('name'):
-            # 🔥 ВСЕГДА берем флаг!
             flag = parsed['country_flag']
             protocol = parsed.get('protocol_info', parsed['type'].upper())
             location = parsed.get('server_location', '')
@@ -460,8 +581,19 @@ def merge_subscriptions() -> str:
     print("=" * 60)
     
     all_nodes = []
-    for sub in SUBSCRIPTIONS:
-        nodes = process_subscription(sub['url'], sub['name_prefix'])
+    group_counts = {}
+    
+    # Сначала собираем все серверы и считаем по группам
+    for i, sub in enumerate(SUBSCRIPTIONS):
+        is_first = (i == 0)
+        nodes = process_subscription(sub['url'], sub['name_prefix'], sub['group_name'], is_first)
+        
+        # Считаем серверы по группам
+        group_name = sub['group_name']
+        if group_name not in group_counts:
+            group_counts[group_name] = 0
+        group_counts[group_name] += len(nodes)
+        
         all_nodes.extend(nodes)
     
     print("=" * 60)
@@ -469,9 +601,24 @@ def merge_subscriptions() -> str:
     
     result = '\n'.join(all_nodes)
     
-    header = f"#  VPN Subscription\n"
-    header += f"# 🔄 {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
-    header += f"# 📦 {len(all_nodes)} servers\n\n"
+    # Добавляем описание подписки
+    header = f"""#
+#  ╔══════════════════════════════════════════════╗
+#  ║     PREMIUM VPN SUBSCRIPTION                 ║
+#  ║  🔥 Автоматическое обновление каждый час     ║
+#  ║  ⚡ Быстрые и стабильные серверы             ║
+#  ║  🌍 Серверы по всему миру                    ║
+#  ╚══════════════════════════════════════════════╝
+#
+#  📊 Статистика:
+#  • Черные списки: {group_counts.get('⬇️ОБХОД ЧЕРНЫХ СПИСКОВ⬇️', 0)} серверов
+#  • Белые списки: {group_counts.get('⬇️ОБХОД БЕЛЫХ СПИСКОВ⬇️', 0)} серверов
+#  • Всего: {len(all_nodes)} серверов
+#
+#  🔄 Обновлено: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}
+#  ⚙️ Generated by ProxyMerger
+#
+"""
     
     return header + result
 
