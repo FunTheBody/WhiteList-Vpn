@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-🔗 Proxy Subscription Merger - PRO VERSION
-Красивое оформление + описание протоколов + серверы
+🔗 Proxy Subscription Merger - ВСЕ С ФЛАГАМИ
 """
 
 import base64
@@ -17,17 +16,14 @@ SUBSCRIPTIONS = [
     {
         "url": "https://izzzyvpn.2bd.net/sub.php?token=S6aEMcA0GXGt9qw7odYs",
         "name_prefix": "🔒 Черные списки",
-        "flag_priority": True
     },
     {
         "url": "https://key.prosvet.best/sub",
         "name_prefix": "⚪ Белые списки",
-        "flag_priority": False
     },
     {
         "url": "https://raw.githubusercontent.com/likzil/vless1/main/Treetcpvpn",
         "name_prefix": "🔒 Черные списки",
-        "flag_priority": True
     }
 ]
 
@@ -36,45 +32,51 @@ COUNTRY_FLAGS = {
     'RU': '🇷🇺', 'UA': '🇺🇦', 'BY': '🇧', 'KZ': '🇿', 'GE': '🇬🇪',
     'DE': '🇩', 'US': '🇸', 'GB': '🇬🇧', 'NL': '🇳🇱', 'FR': '🇫',
     'PL': '🇵🇱', 'TR': '🇹🇷', 'CN': '🇨', 'JP': '🇵', 'SG': '🇸🇬',
-    'KR': '🇰', 'IN': '🇳', 'BR': '🇧🇷', 'CA': '🇨🇦', 'AU': '🇦',
-    'IT': '🇮🇹', 'ES': '🇪', 'SE': '🇪', 'NO': '🇳🇴', 'FI': '🇫🇮',
-    'CH': '🇨', 'AT': '🇹', 'BE': '🇧🇪', 'CZ': '🇨', 'RO': '🇴',
+    'KR': '🇰', 'IN': '🇳', 'BR': '🇧🇷', 'CA': '🇨🇦', 'AU': '🇦🇺',
+    'IT': '🇮🇹', 'ES': '🇪🇸', 'SE': '🇸', 'NO': '🇴', 'FI': '🇫🇮',
+    'CH': '🇨🇭', 'AT': '🇦🇹', 'BE': '🇧🇪', 'CZ': '🇨', 'RO': '🇴',
     'MD': '🇲🇩', 'LT': '🇱🇹', 'LV': '🇱', 'EE': '🇪', 'AZ': '🇦🇿',
-    'AM': '🇦🇲', 'UZ': '🇺🇿', 'KG': '🇰', 'TJ': '🇯', 'MN': '🇲🇳',
+    'AM': '🇦🇲', 'UZ': '🇺', 'KG': '🇬', 'TJ': '🇹🇯', 'MN': '🇲🇳',
     'VN': '🇻🇳', 'TH': '🇹🇭', 'MY': '🇲🇾', 'ID': '🇮🇩', 'PH': '🇵🇭',
     'HK': '🇭🇰', 'TW': '🇹🇼', 'MO': '🇲🇴', 'IL': '🇮🇱', 'AE': '🇦🇪',
     'SA': '🇸🇦', 'EG': '🇪🇬', 'ZA': '🇿', 'NG': '🇬', 'KE': '🇰🇪',
     'AR': '🇦🇷', 'CL': '🇨🇱', 'CO': '🇨🇴', 'MX': '🇲🇽', 'PE': '🇵🇪',
     'VE': '🇻🇪', 'GR': '🇬🇷', 'PT': '🇵🇹', 'IE': '🇮🇪', 'DK': '🇩🇰',
-    'IS': '🇮🇸', 'LU': '🇱🇺', 'MT': '🇲', 'CY': '🇾', 'SK': '🇸🇰',
+    'IS': '🇮🇸', 'LU': '🇱🇺', 'MT': '🇲🇹', 'CY': '🇨', 'SK': '🇰',
     'SI': '🇸🇮', 'HR': '🇭🇷', 'BG': '🇧', 'RS': '🇸', 'BA': '🇧🇦',
-    'MK': '🇲', 'AL': '🇱', 'ME': '🇲🇪', 'XK': '🇽🇰', 'UNKNOWN': '🌐'
+    'MK': '🇲🇰', 'AL': '🇦🇱', 'ME': '🇲', 'XK': '🇰', 'UNKNOWN': '🌐'
 }
 
-# 🔍 Паттерны стран
+# 🔍 Паттерны стран — РАСШИРЕННЫЕ
 COUNTRY_PATTERNS = {
-    'RU': [r'ru\b', r'moscow', r'moskva', r'spb', r'saint.petersburg', r'\.ru\b', r'russia'],
-    'UA': [r'ua\b', r'kiev', r'kyiv', r'kharkiv', r'odessa', r'\.ua\b', r'ukraine'],
-    'DE': [r'de\b', r'germany', r'frankfurt', r'berlin', r'munich', r'\.de\b'],
-    'US': [r'us\b', r'usa', r'new.york', r'los.angeles', r'miami', r'\.us\b', r'united.states'],
-    'GB': [r'gb\b', r'uk\b', r'london', r'manchester', r'\.uk\b', r'\.co.uk\b', r'united.kingdom'],
-    'NL': [r'nl\b', r'netherlands', r'amsterdam', r'rotterdam', r'\.nl\b'],
-    'FR': [r'fr\b', r'france', r'paris', r'marseille', r'\.fr\b'],
-    'PL': [r'pl\b', r'poland', r'warsaw', r'krakow', r'\.pl\b'],
-    'TR': [r'tr\b', r'turkey', r'istanbul', r'ankara', r'\.tr\b'],
-    'CN': [r'cn\b', r'china', r'beijing', r'shanghai', r'\.cn\b'],
-    'JP': [r'jp\b', r'japan', r'tokyo', r'osaka', r'\.jp\b'],
-    'SG': [r'sg\b', r'singapore', r'\.sg\b'],
-    'KR': [r'kr\b', r'korea', r'seoul', r'\.kr\b'],
-    'KZ': [r'kz\b', r'kazakhstan', r'almaty', r'astana', r'\.kz\b'],
-    'BY': [r'by\b', r'belarus', r'minsk', r'\.by\b'],
-    'GE': [r'ge\b', r'georgia', r'tbilisi', r'\.ge\b'],
-    'FI': [r'fi\b', r'finland', r'helsinki', r'\.fi\b'],
-    'IT': [r'it\b', r'italy', r'italian', r'rome', r'milan', r'\.it\b'],
-    'ES': [r'es\b', r'spain', r'spain', r'madrid', r'barcelona', r'\.es\b'],
-    'SE': [r'se\b', r'sweden', r'stockholm', r'\.se\b'],
-    'CA': [r'ca\b', r'canada', r'toronto', r'vancouver', r'\.ca\b'],
-    'AU': [r'au\b', r'australia', r'sydney', r'melbourne', r'\.au\b'],
+    'RU': [r'ru\b', r'moscow', r'moskva', r'spb', r'saint.petersburg', r'\.ru\b', r'russia', r'москва', r'питер', r'спб'],
+    'UA': [r'ua\b', r'kiev', r'kyiv', r'kharkiv', r'odessa', r'\.ua\b', r'ukraine', r'киев', r'харьков', r'одесса'],
+    'DE': [r'de\b', r'germany', r'frankfurt', r'berlin', r'munich', r'\.de\b', r'германия', r'франкфурт', r'берлин'],
+    'US': [r'us\b', r'usa', r'new.york', r'los.angeles', r'miami', r'\.us\b', r'united.states', r'нью.йорк', r'майами'],
+    'GB': [r'gb\b', r'uk\b', r'london', r'manchester', r'\.uk\b', r'\.co.uk\b', r'united.kingdom', r'лондон'],
+    'NL': [r'nl\b', r'netherlands', r'amsterdam', r'rotterdam', r'\.nl\b', r'амстердам', r'нидерланды'],
+    'FR': [r'fr\b', r'france', r'paris', r'marseille', r'\.fr\b', r'франция', r'париж'],
+    'PL': [r'pl\b', r'poland', r'warsaw', r'krakow', r'\.pl\b', r'польша', r'варшава'],
+    'TR': [r'tr\b', r'turkey', r'istanbul', r'ankara', r'\.tr\b', r'турция', r'стамбул'],
+    'CN': [r'cn\b', r'china', r'beijing', r'shanghai', r'\.cn\b', r'китай', r'пекин'],
+    'JP': [r'jp\b', r'japan', r'tokyo', r'osaka', r'\.jp\b', r'япония', r'токио'],
+    'SG': [r'sg\b', r'singapore', r'\.sg\b', r'сингапур'],
+    'KR': [r'kr\b', r'korea', r'seoul', r'\.kr\b', r'корея', r'сеул'],
+    'KZ': [r'kz\b', r'kazakhstan', r'almaty', r'astana', r'\.kz\b', r'казахстан', r'алматы', r'астана'],
+    'BY': [r'by\b', r'belarus', r'minsk', r'\.by\b', r'беларусь', r'минск'],
+    'GE': [r'ge\b', r'georgia', r'tbilisi', r'\.ge\b', r'грузия', r'тбилиси'],
+    'FI': [r'fi\b', r'finland', r'helsinki', r'\.fi\b', r'финляндия', r'хельсинки'],
+    'IT': [r'it\b', r'italy', r'italian', r'rome', r'milan', r'\.it\b', r'италия', r'рим', r'милан'],
+    'ES': [r'es\b', r'spain', r'madrid', r'barcelona', r'\.es\b', r'испания', r'мадрид'],
+    'SE': [r'se\b', r'sweden', r'stockholm', r'\.se\b', r'швеция', r'стокгольм'],
+    'CA': [r'ca\b', r'canada', r'toronto', r'vancouver', r'\.ca\b', r'канада', r'торонто'],
+    'AU': [r'au\b', r'australia', r'sydney', r'melbourne', r'\.au\b', r'австралия', r'сидней'],
+    'BR': [r'br\b', r'brazil', r'sao.paulo', r'\.br\b', r'бразилия'],
+    'IN': [r'in\b', r'india', r'mumbai', r'delhi', r'\.in\b', r'индия', r'мумбаи'],
+    'AE': [r'ae\b', r'uae', r'dubai', r'\.ae\b', r'оаэ', r'дубай'],
+    'IL': [r'il\b', r'israel', r'tel.aviv', r'\.il\b', r'израиль', r'тель.авив'],
+    'RO': [r'ro\b', r'romania', r'bucharest', r'\.ro\b', r'румыния', r'бухарест'],
+    'MD': [r'md\b', r'moldova', r'chisinau', r'\.md\b', r'молдова', r'кишинев'],
 }
 
 METADATA_PATTERNS = [
@@ -103,29 +105,49 @@ def is_proxy_link(line: str) -> bool:
 
 
 def detect_country_flag(node_name: str, node_url: str = "", host: str = "") -> str:
-    """Улучшенное определение страны"""
-    text = (node_name + " " + node_url + " " + host).lower()
+    """Улучшенное определение страны — ТЕПЕРЬ ДЛЯ ВСЕХ"""
+    # Объединяем всю доступную информацию
+    text = f"{node_name} {node_url} {host}".lower()
     
-    # Сначала ищем по паттернам
+    # 1. Ищем по паттернам
     for country, patterns in COUNTRY_PATTERNS.items():
         for pattern in patterns:
             if re.search(pattern, text, re.I):
-                return COUNTRY_FLAGS.get(country, COUNTRY_FLAGS['UNKNOWN'])
-    
-    # Если не нашли, пробуем по домену
-    if host:
-        domain_match = re.search(r'\.([a-z]{2,3})(?::|\s|$)', host.lower())
-        if domain_match:
-            tld = domain_match.group(1).upper()
-            for country, flag in COUNTRY_FLAGS.items():
-                if country == tld:
+                flag = COUNTRY_FLAGS.get(country)
+                if flag:
                     return flag
     
-    return COUNTRY_FLAGS['UNKNOWN']
+    # 2. Ищем по домену верхнего уровня
+    if host:
+        domain_match = re.search(r'\.([a-z]{2})(?::|/|$|\s)', host.lower())
+        if domain_match:
+            tld = domain_match.group(1).upper()
+            flag = COUNTRY_FLAGS.get(tld)
+            if flag:
+                return flag
+    
+    # 3. Проверяем IP на начало (для некоторых стран)
+    if host:
+        ip_patterns = {
+            r'^185\.\d+\.\d+': 'NL',  # Нидерланды часто
+            r'^31\.\d+\.\d+': 'NL',
+            r'^5\.\d+\.\d+': 'RU',    # Россия
+            r'^77\.\d+\.\d+': 'RU',
+            r'^85\.\d+\.\d+': 'DE',   # Германия
+            r'^95\.\d+\.\d+': 'RU',
+        }
+        for pattern, country in ip_patterns.items():
+            if re.match(pattern, host):
+                flag = COUNTRY_FLAGS.get(country)
+                if flag:
+                    return flag
+    
+    # 4. Если ничего не нашли — возвращаем глобус
+    return '🌐'
 
 
 def get_protocol_info(link: str, proxy_type: str) -> str:
-    """Извлекает информацию о протоколе (TCP/REALITY/XHTTP/TLS и т.д.)"""
+    """Извлекает информацию о протоколе"""
     try:
         if proxy_type == 'vless':
             parsed = urlparse(link)
@@ -135,10 +157,8 @@ def get_protocol_info(link: str, proxy_type: str) -> str:
             type_conn = params.get('type', ['tcp'])[0]
             flow = params.get('flow', [''])[0]
             
-            # Формируем описание
             proto_parts = ['VLESS']
             
-            # Тип соединения
             if type_conn == 'tcp':
                 proto_parts.append('TCP')
             elif type_conn == 'ws':
@@ -150,7 +170,6 @@ def get_protocol_info(link: str, proxy_type: str) -> str:
             elif type_conn == 'quic':
                 proto_parts.append('QUIC')
             
-            # Безопасность
             if security == 'reality':
                 proto_parts.append('REALITY')
             elif security == 'tls':
@@ -158,7 +177,6 @@ def get_protocol_info(link: str, proxy_type: str) -> str:
             elif security == 'xtls':
                 proto_parts.append('XTLS')
             
-            # Flow
             if 'vision' in flow.lower():
                 proto_parts.append('VISION')
             
@@ -215,23 +233,22 @@ def get_protocol_info(link: str, proxy_type: str) -> str:
         elif proxy_type == 'tuic':
             return 'TUIC'
             
-    except Exception as e:
+    except:
         pass
     
     return proxy_type.upper()
 
 
 def get_server_location(host: str) -> str:
-    """Пытается определить локацию сервера по хосту"""
+    """Определяет локацию сервера"""
     if not host:
         return ""
     
-    # Пробуем извлечь город/страну из хоста
     host_lower = host.lower()
     
     locations = {
-        'moscow': 'Москва', 'msk': 'Москва', 'spb': 'Питер', 'piter': 'Питер',
-        'frankfurt': 'Франкфурт', 'berlin': 'Берлин',
+        'moscow': 'Москва', 'msk': 'Москва', 'spb': 'Питер', 'piter': 'Питер', 'saint.petersburg': 'Питер',
+        'frankfurt': 'Франкфурт', 'berlin': 'Берлин', 'munich': 'Мюнхен',
         'amsterdam': 'Амстердам', 'rotterdam': 'Роттердам',
         'london': 'Лондон', 'manchester': 'Манчестер',
         'paris': 'Париж', 'marseille': 'Марсель',
@@ -239,15 +256,27 @@ def get_server_location(host: str) -> str:
         'istanbul': 'Стамбул', 'ankara': 'Анкара',
         'tokyo': 'Токио', 'osaka': 'Осака',
         'singapore': 'Сингапур',
-        'new.york': 'Нью-Йорк', 'los.angeles': 'Лос-Анджелес', 'miami': 'Майами',
+        'new.york': 'Нью-Йорк', 'los.angeles': 'Лос-Анджелес', 'miami': 'Майами', 'dallas': 'Даллас',
         'finland': 'Финляндия', 'helsinki': 'Хельсинки',
         'italy': 'Италия', 'rome': 'Рим', 'milan': 'Милан',
         'netherlands': 'Нидерланды',
         'germany': 'Германия',
         'poland': 'Польша',
         'turkey': 'Турция',
-        'ukraine': 'Украина', 'kiev': 'Киев', 'kyiv': 'Киев',
+        'ukraine': 'Украина', 'kiev': 'Киев', 'kyiv': 'Киев', 'kharkiv': 'Харьков',
         'kazakhstan': 'Казахстан', 'almaty': 'Алматы', 'astana': 'Астана',
+        'belarus': 'Беларусь', 'minsk': 'Минск',
+        'georgia': 'Грузия', 'tbilisi': 'Тбилиси',
+        'spain': 'Испания', 'madrid': 'Мадрид', 'barcelona': 'Барселона',
+        'sweden': 'Швеция', 'stockholm': 'Стокгольм',
+        'canada': 'Канада', 'toronto': 'Торонто', 'vancouver': 'Ванкувер',
+        'australia': 'Австралия', 'sydney': 'Сидней',
+        'brazil': 'Бразилия', 'saopaulo': 'Сан-Паулу',
+        'india': 'Индия', 'mumbai': 'Мумбаи', 'delhi': 'Дели',
+        'uae': 'ОАЭ', 'dubai': 'Дубай',
+        'israel': 'Израиль', 'telaviv': 'Тель-Авив',
+        'romania': 'Румыния', 'bucharest': 'Бухарест',
+        'moldova': 'Молдова', 'chisinau': 'Кишинев',
     }
     
     for key, value in locations.items():
@@ -321,7 +350,7 @@ def parse_proxy_link(link: str) -> dict:
     except Exception as e:
         result['name'] = f"Error-{hash(link) % 10000}"
     
-    # Определяем флаг и локацию
+    # 🔥 ВАЖНО: Всегда определяем флаг для ВСЕХ серверов!
     result['country_flag'] = detect_country_flag(result['name'], link, result['host'])
     result['server_location'] = get_server_location(result['host'])
     
@@ -329,7 +358,7 @@ def parse_proxy_link(link: str) -> dict:
 
 
 def fetch_subscription(url: str) -> list:
-    """Загружает подписку с улучшенной обработкой"""
+    """Загружает подписку"""
     headers = {
         'User-Agent': 'ClashMetaForAndroid/2.11.2 Meta',
         'Accept': '*/*',
@@ -353,7 +382,6 @@ def fetch_subscription(url: str) -> list:
         proxy_links = []
         for line in lines:
             if is_proxy_link(line):
-                # Проверяем что это не метаданные
                 is_meta = False
                 for pattern in METADATA_PATTERNS:
                     if re.match(pattern, line, re.I):
@@ -362,16 +390,16 @@ def fetch_subscription(url: str) -> list:
                 if not is_meta:
                     proxy_links.append(line)
         
-        print(f"   Найдено ссылок: {len(proxy_links)}")
+        print(f"   Найдено: {len(proxy_links)}")
         return proxy_links
         
     except Exception as e:
-        print(f"❌ Ошибка загрузки {url}: {e}")
+        print(f"❌ Ошибка {url}: {e}")
         return []
 
 
 def rename_proxy_link(original_link: str, new_name: str, proxy_type: str) -> str:
-    """Заменяет имя на новое"""
+    """Заменяет имя"""
     try:
         if proxy_type == 'vmess':
             config = json.loads(decode_base64_safe(original_link[8:]))
@@ -391,39 +419,38 @@ def rename_proxy_link(original_link: str, new_name: str, proxy_type: str) -> str
             return f"{original_link}#{new_name}"
         return original_link
     except Exception as e:
-        print(f"⚠️ Ошибка переименования: {e}")
+        print(f"⚠️ Ошибка: {e}")
         return original_link
 
 
 def format_proxy_name(prefix: str, flag: str, protocol: str, location: str = "") -> str:
-    """Форматирует красивое имя как на скриншоте"""
-    # Формат: [Флаг] Префикс | Протокол | Локация (если есть)
+    """Форматирует имя"""
     if location:
         return f"{flag} {prefix} | {protocol} | {location}"
     else:
         return f"{flag} {prefix} | {protocol}"
 
 
-def process_subscription(url: str, name_prefix: str, flag_priority: bool) -> list:
-    print(f"📥 Загрузка: {url[:60]}...")
+def process_subscription(url: str, name_prefix: str) -> list:
+    print(f"📥 {url[:60]}...")
     links = fetch_subscription(url)
     
     processed = []
     for link in links:
         parsed = parse_proxy_link(link)
         if parsed and parsed.get('name'):
-            flag = parsed['country_flag'] if flag_priority else '🌐'
+            # 🔥 ВСЕГДА берем флаг!
+            flag = parsed['country_flag']
             protocol = parsed.get('protocol_info', parsed['type'].upper())
             location = parsed.get('server_location', '')
             
-            # Формируем красивое имя
             new_name = format_proxy_name(name_prefix, flag, protocol, location)
             
             new_link = rename_proxy_link(link, new_name, parsed['type'])
             if new_link:
                 processed.append(new_link)
     
-    print(f"✅ Обработано: {len(processed)} узлов")
+    print(f"✅ Обработано: {len(processed)}")
     return processed
 
 
@@ -434,18 +461,17 @@ def merge_subscriptions() -> str:
     
     all_nodes = []
     for sub in SUBSCRIPTIONS:
-        nodes = process_subscription(sub['url'], sub['name_prefix'], sub.get('flag_priority', True))
+        nodes = process_subscription(sub['url'], sub['name_prefix'])
         all_nodes.extend(nodes)
     
     print("=" * 60)
-    print(f"📊 ВСЕГО УЗЛОВ: {len(all_nodes)}")
+    print(f"📊 ВСЕГО: {len(all_nodes)}")
     
     result = '\n'.join(all_nodes)
     
-    header = f"#  Premium VPN Subscription\n"
-    header += f"# 🔄 Обновлено: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
-    header += f"# 📦 Серверов: {len(all_nodes)}\n"
-    header += f"# ⚡ Быстрые и стабильные подключения\n\n"
+    header = f"#  VPN Subscription\n"
+    header += f"# 🔄 {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
+    header += f"# 📦 {len(all_nodes)} servers\n\n"
     
     return header + result
 
@@ -455,7 +481,7 @@ def save_to_file(content: str, filepath: str = "output/merged_sub.txt"):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(content)
-    print(f"💾 Сохранено: {filepath}")
+    print(f"💾 {filepath}")
 
 
 def main():
@@ -464,7 +490,7 @@ def main():
         save_to_file(result)
         b64 = base64.b64encode(result.encode('utf-8')).decode()
         save_to_file(b64, "output/merged_sub_base64.txt")
-        print("\n✨ ГОТОВО! Подписка обновлена.")
+        print("\n✨ ГОТОВО!")
         return 0
     except Exception as e:
         print(f"❌ Ошибка: {e}")
