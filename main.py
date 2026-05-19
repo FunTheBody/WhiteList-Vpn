@@ -3,6 +3,7 @@
 """
 🔗 Proxy Subscription Merger
 Объединяет подписки, переименовывает узлы, добавляет флаги стран
+ФИЛЬТРУЕТ метаданные подписок (#profile-*, #announce и т.д.)
 """
 
 import base64
@@ -16,7 +17,7 @@ SUBSCRIPTIONS = [
     {
         "url": "https://izzzyvpn.2bd.net/sub.php?token=S6aEMcA0GXGt9qw7odYs",
         "name_prefix": "🔒 Обход черных списков",
-        "flag_priority": True  # Приоритет определения флага
+        "flag_priority": True
     },
     {
         "url": "https://key.prosvet.best/sub",
@@ -25,7 +26,7 @@ SUBSCRIPTIONS = [
     }
 ]
 
-# 🌍 Словарь флагов по кодам стран
+# 🌍 Словарь флагов
 COUNTRY_FLAGS = {
     'RU': '🇷🇺', 'UA': '🇺🇦', 'BY': '🇧🇾', 'KZ': '🇰🇿', 'GE': '🇬🇪',
     'DE': '🇩🇪', 'US': '🇺🇸', 'GB': '🇬🇧', 'NL': '🇳🇱', 'FR': '🇫🇷',
@@ -45,7 +46,7 @@ COUNTRY_FLAGS = {
     'MK': '🇲🇰', 'AL': '🇦🇱', 'ME': '🇲🇪', 'XK': '🇽🇰', 'UNKNOWN': '🌐'
 }
 
-# 🔍 Паттерны для определения страны по имени узла
+# 🔍 Паттерны стран
 COUNTRY_PATTERNS = {
     'RU': [r'ru\b', r'moscow', r'moskva', r'spb', r'saint.petersburg', r'\.ru\b'],
     'UA': [r'ua\b', r'kiev', r'kyiv', r'kharkiv', r'odessa', r'\.ua\b'],
@@ -63,61 +64,78 @@ COUNTRY_PATTERNS = {
     'KZ': [r'kz\b', r'kazakhstan', r'almaty', r'astana', r'\.kz\b'],
     'BY': [r'by\b', r'belarus', r'minsk', r'\.by\b'],
     'GE': [r'ge\b', r'georgia', r'tbilisi', r'\.ge\b'],
+    'FI': [r'fi\b', r'finland', r'helsinki', r'\.fi\b'],
+    'IT': [r'it\b', r'italy', r'italian', r'rome', r'milan', r'\.it\b'],
 }
+
+# 🗑️ Паттерны метаданных, которые нужно ФИЛЬТРОВАТЬ
+METADATA_PATTERNS = [
+    r'^#profile-',
+    r'^#announce:',
+    r'^#subscription-userinfo:',
+    r'^#support-url:',
+    r'^#profile-web-page-url:',
+    r'^#profile-update-interval:',
+    r'^#⚙️',
+    r'^# 🔄',
+]
 
 
 def decode_base64_safe(data: str) -> str:
-    """Безопасное декодирование base64 с паддингом"""
-    # Добавляем паддинг если нужно
+    """Безопасное декодирование base64"""
     missing_padding = len(data) % 4
     if missing_padding:
         data += '=' * (4 - missing_padding)
     try:
-        decoded = base64.b64decode(data).decode('utf-8', errors='ignore')
-        return decoded
+        return base64.b64decode(data).decode('utf-8', errors='ignore')
     except:
         return data
 
 
+def is_proxy_link(line: str) -> bool:
+    """Проверяет, является ли строка прокси-ссылкой (а не метаданными)"""
+    line = line.strip()
+    if not line or line.startswith('#'):
+        return False
+    # Проверяем начало на известные протоколы
+    proxy_prefixes = ('vmess://', 'vless://', 'trojan://', 'ss://', 'ssr://', 
+                      'hysteria://', 'hysteria2://', 'tuic://', 'hy2://', 'wireguard://')
+    return any(line.lower().startswith(prefix) for prefix in proxy_prefixes)
+
+
+def is_metadata_line(line: str) -> bool:
+    """Проверяет, является ли строка метаданными подписки"""
+    line = line.strip()
+    if not line.startswith('#'):
+        return False
+    for pattern in METADATA_PATTERNS:
+        if re.match(pattern, line, re.I):
+            return True
+    return False
+
+
 def detect_country_flag(node_name: str, node_url: str = "") -> str:
-    """Определяет флаг страны по имени узла или URL"""
+    """Определяет флаг страны"""
     text = (node_name + " " + node_url).lower()
-    
-    # Поиск по паттернам
     for country, patterns in COUNTRY_PATTERNS.items():
         for pattern in patterns:
             if re.search(pattern, text, re.I):
                 return COUNTRY_FLAGS.get(country, COUNTRY_FLAGS['UNKNOWN'])
-    
-    # Поиск по IP (если есть в URL)
-    ip_match = re.search(r'\b(?:\d{1,3}\.){3}\d{1,3}\b', node_url)
-    if ip_match:
-        # Здесь можно добавить API запрос к ipapi.co или подобному
-        # Для простоты возвращаем неизвестный флаг
-        pass
-    
     return COUNTRY_FLAGS['UNKNOWN']
 
 
 def parse_proxy_link(link: str) -> dict:
-    """Парсит ссылку прокси и извлекает информацию"""
+    """Парсит ссылку прокси"""
     link = link.strip()
-    if not link:
+    if not link or not is_proxy_link(link):
         return None
     
-    result = {
-        'original': link,
-        'type': None,
-        'name': None,
-        'country_flag': '🌐'
-    }
+    result = {'original': link, 'type': None, 'name': None, 'country_flag': '🌐', 'host': ''}
     
     try:
         if link.startswith('vmess://'):
             result['type'] = 'vmess'
-            # Декодируем vmess ссылку
-            config_b64 = link[8:]
-            config_json = decode_base64_safe(config_b64)
+            config_json = decode_base64_safe(link[8:])
             import json
             config = json.loads(config_json)
             result['name'] = config.get('ps', 'Unnamed')
@@ -125,7 +143,6 @@ def parse_proxy_link(link: str) -> dict:
             
         elif link.startswith('vless://'):
             result['type'] = 'vless'
-            # Парсим vless://uuid@host:port?params#name
             parsed = urlparse(link)
             result['name'] = unquote(parsed.fragment) or 'Unnamed'
             result['host'] = parsed.netloc.split('@')[-1].split(':')[0] if '@' in parsed.netloc else parsed.netloc.split(':')[0]
@@ -138,173 +155,126 @@ def parse_proxy_link(link: str) -> dict:
             
         elif link.startswith('ss://'):
             result['type'] = 'shadowsocks'
-            # ss://base64(method:pass@host:port)#name или ss://method:pass@host:port#name
-            try:
-                parsed = urlparse(link)
-                result['name'] = unquote(parsed.fragment) or 'Unnamed'
-                # Пробуем извлечь хост
-                netloc = parsed.netloc
-                if '@' in netloc:
-                    host_part = netloc.split('@')[-1]
-                else:
-                    # Может быть закодировано
-                    try:
-                        decoded = decode_base64_safe(netloc.split('#')[0])
-                        host_part = decoded.split('@')[-1] if '@' in decoded else netloc
-                    except:
-                        host_part = netloc
-                result['host'] = host_part.split(':')[0] if ':' in host_part else host_part
-            except:
-                result['name'] = 'Shadowsocks Node'
-                
-        elif link.startswith('hysteria2://') or link.startswith('hysteria://'):
+            parsed = urlparse(link)
+            result['name'] = unquote(parsed.fragment) or 'Shadowsocks'
+            result['host'] = parsed.netloc.split('@')[-1].split(':')[0] if '@' in parsed.netloc else parsed.netloc.split(':')[0]
+            
+        elif link.startswith(('hysteria2://', 'hysteria://', 'hy2://')):
             result['type'] = 'hysteria'
             parsed = urlparse(link)
-            result['name'] = unquote(parsed.fragment) or 'Unnamed'
+            result['name'] = unquote(parsed.fragment) or 'Hysteria'
             result['host'] = parsed.netloc.split(':')[0]
             
         elif link.startswith('tuic://'):
             result['type'] = 'tuic'
             parsed = urlparse(link)
-            result['name'] = unquote(parsed.fragment) or 'Unnamed'
+            result['name'] = unquote(parsed.fragment) or 'Tuic'
             result['host'] = parsed.netloc.split('@')[-1].split(':')[0] if '@' in parsed.netloc else parsed.netloc.split(':')[0]
-            
         else:
-            # Возможно, это JSON конфиг или другая форма
-            result['name'] = f"Unknown-{hash(link) % 10000}"
+            result['name'] = f"Proxy-{hash(link) % 10000}"
             
     except Exception as e:
         result['name'] = f"Error-{hash(link) % 10000}"
-        result['error'] = str(e)
     
-    # Определяем флаг
     result['country_flag'] = detect_country_flag(result['name'], result.get('host', ''))
-    
     return result
 
 
-def fetch_subscription(url: str) -> str:
-    """Загружает подписку по URL"""
-    headers = {
-        'User-Agent': 'ClashMetaForAndroid/2.11.2 Meta'
-    }
+def fetch_subscription(url: str) -> list:
+    """Загружает подписку и возвращает ТОЛЬКО прокси-ссылки"""
+    headers = {'User-Agent': 'ClashMetaForAndroid/2.11.2 Meta'}
     try:
         response = requests.get(url, headers=headers, timeout=30)
         response.raise_for_status()
         content = response.text.strip()
         
-        # Проверяем, нужно ли декодировать base64
-        if not content.startswith(('vmess://', 'vless://', 'trojan://', 'ss://', 'hysteria', 'tuic', '{')):
-            # Пытаемся декодировать как base64
+        # Декодируем если нужно
+        if not any(content.startswith(p) for p in ('vmess://', 'vless://', 'trojan://', 'ss://', '{')):
             try:
                 content = decode_base64_safe(content)
             except:
                 pass
-        return content
-    except requests.RequestException as e:
+        
+        # Разбиваем на строки и ФИЛЬТРУЕМ
+        lines = [line.strip() for line in content.split('\n') if line.strip()]
+        proxy_links = [line for line in lines if is_proxy_link(line) and not is_metadata_line(line)]
+        
+        return proxy_links
+    except Exception as e:
         print(f"❌ Ошибка загрузки {url}: {e}")
-        return ""
+        return []
+
+
+def rename_proxy_link(original_link: str, new_name: str, proxy_type: str) -> str:
+    """Переименовывает узел"""
+    try:
+        if proxy_type == 'vmess':
+            import json
+            config = json.loads(decode_base64_safe(original_link[8:]))
+            config['ps'] = new_name
+            new_b64 = base64.b64encode(json.dumps(config, ensure_ascii=False).encode('utf-8')).decode().rstrip('=')
+            return f"vmess://{new_b64}"
+            
+        elif proxy_type in ['vless', 'trojan', 'hysteria', 'tuic']:
+            parsed = urlparse(original_link)
+            from urllib.parse import urlunparse
+            return urlunparse(parsed._replace(fragment=new_name))
+            
+        elif proxy_type == 'shadowsocks':
+            if '#' in original_link:
+                base, _ = original_link.rsplit('#', 1)
+                return f"{base}#{new_name}"
+            return original_link
+        return original_link
+    except:
+        return original_link
 
 
 def process_subscription(url: str, name_prefix: str, flag_priority: bool) -> list:
-    """Обрабатывает одну подписку и возвращает список оформленных ссылок"""
+    """Обрабатывает подписку"""
     print(f"📥 Загрузка: {url[:50]}...")
-    content = fetch_subscription(url)
-    
-    if not content:
-        return []
-    
-    # Разбиваем на строки (каждая строка - ссылка)
-    links = [line.strip() for line in content.split('\n') if line.strip()]
+    links = fetch_subscription(url)
     
     processed = []
     for link in links:
         parsed = parse_proxy_link(link)
         if parsed and parsed.get('name'):
-            # Формируем новое имя: [Флаг] Префикс | Оригинальное имя
             flag = parsed['country_flag'] if flag_priority else ''
             new_name = f"{flag} {name_prefix} | {parsed['name']}".strip()
-            
-            # Пересобираем ссылку с новым именем
             new_link = rename_proxy_link(link, new_name, parsed['type'])
             if new_link:
                 processed.append(new_link)
     
-    print(f"✅ Обработано: {len(processed)} узлов из {len(links)}")
+    print(f"✅ Обработано: {len(processed)} узлов")
     return processed
 
 
-def rename_proxy_link(original_link: str, new_name: str, proxy_type: str) -> str:
-    """Переименовывает узел в ссылке"""
-    try:
-        if proxy_type == 'vmess':
-            config_b64 = original_link[8:]
-            config_json = decode_base64_safe(config_b64)
-            import json
-            config = json.loads(config_json)
-            config['ps'] = new_name  # ps = proxy name
-            new_config_b64 = base64.b64encode(
-                json.dumps(config, ensure_ascii=False).encode('utf-8')
-            ).decode('utf-8').rstrip('=')
-            return f"vmess://{new_config_b64}"
-            
-        elif proxy_type in ['vless', 'trojan', 'hysteria', 'tuic']:
-            # Для этих типов имя в fragment (#name)
-            parsed = urlparse(original_link)
-            # Заменяем fragment
-            from urllib.parse import urlunparse
-            new_parsed = parsed._replace(fragment=new_name)
-            return urlunparse(new_parsed)
-            
-        elif proxy_type == 'shadowsocks':
-            # ss:// может иметь имя в fragment
-            if '#' in original_link:
-                base, _ = original_link.rsplit('#', 1)
-                return f"{base}#{new_name}"
-            return original_link
-            
-        else:
-            # Для неизвестных типов возвращаем как есть
-            return original_link
-            
-    except Exception as e:
-        print(f"⚠️ Не удалось переименовать: {e}")
-        return original_link
-
-
 def merge_subscriptions() -> str:
-    """Основная функция: объединяет все подписки"""
-    print("🚀 Запуск объединения подписок...")
-    print(f"📅 Время: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    """Основная функция"""
+    print("🚀 Запуск...")
+    print(f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("-" * 50)
     
     all_nodes = []
-    
     for sub in SUBSCRIPTIONS:
-        nodes = process_subscription(
-            sub['url'], 
-            sub['name_prefix'], 
-            sub.get('flag_priority', True)
-        )
+        nodes = process_subscription(sub['url'], sub['name_prefix'], sub.get('flag_priority', True))
         all_nodes.extend(nodes)
     
     print("-" * 50)
-    print(f"📊 Всего узлов: {len(all_nodes)}")
+    print(f"📊 Всего: {len(all_nodes)} узлов")
     
-    # Формируем итоговую подписку
     result = '\n'.join(all_nodes)
     
-    # Добавляем заголовок с информацией
-    header = f"# 🔗 Merged Subscription\n"
-    header += f"# 🔄 Updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
-    header += f"# 📦 Nodes: {len(all_nodes)}\n"
-    header += f"# ⚙️ Generated by ProxyMerger\n\n"
+    # ✅ ТОЛЬКО наши заголовки, без мусора из подписок
+    header = f"# 🔗 Merged by ProxyMerger\n"
+    header += f"# 🔄 {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
+    header += f"# 📦 {len(all_nodes)} nodes\n\n"
     
     return header + result
 
 
 def save_to_file(content: str, filepath: str = "output/merged_sub.txt"):
-    """Сохраняет результат в файл"""
+    """Сохраняет файл"""
     import os
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, 'w', encoding='utf-8') as f:
@@ -313,20 +283,16 @@ def save_to_file(content: str, filepath: str = "output/merged_sub.txt"):
 
 
 def main():
-    """Точка входа"""
     try:
         result = merge_subscriptions()
         save_to_file(result)
-        
-        # Также сохраняем в base64 для совместимости с некоторыми клиентами
-        b64_result = base64.b64encode(result.encode('utf-8')).decode('utf-8')
-        save_to_file(b64_result, "output/merged_sub_base64.txt")
-        
-        print("\n✨ Готово! Подписка обновлена.")
+        # Base64 версия
+        b64 = base64.b64encode(result.encode('utf-8')).decode()
+        save_to_file(b64, "output/merged_sub_base64.txt")
+        print("\n✨ Готово!")
         return 0
-        
     except Exception as e:
-        print(f"❌ Критическая ошибка: {e}")
+        print(f"❌ Ошибка: {e}")
         import traceback
         traceback.print_exc()
         return 1
