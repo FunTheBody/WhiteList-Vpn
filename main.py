@@ -126,7 +126,7 @@ COUNTRY_PATTERNS = {
     'IS': [r'is\b', r'iceland', r'reykjavik', r'\.is\b', r'исландия', r'рейкьявик', r'akureyri'],
     'LU': [r'lu\b', r'luxembourg', r'luxembourg', r'\.lu\b', r'люксембург'],
     'MT': [r'mt\b', r'malta', r'valletta', r'\.mt\b', r'мальта', r'валлетта', r'sliema'],
-    'CY': [r'cy\b', r'cyprus', r'nicosia', r'\.cy\b', r'кипр', r'никосия', r'limassol', larnaca'],
+    'CY': [r'cy\b', r'cyprus', r'nicosia', r'\.cy\b', r'кипр', r'никосия', r'limassol', 'larnaca'],
     'BA': [r'ba\b', r'bosnia', r'sarajevo', r'\.ba\b', r'босния', r'сараево', r'banjaluka', r'tuzla'],
     'AL': [r'al\b', r'albania', r'tirana', r'\.al\b', r'албания', r'тирана', r'durres', r'vlora'],
     'ME': [r'me\b', r'montenegro', r'podgorica', r'\.me\b', r'черногория', r'подгорица', r'budva', r'bar'],
