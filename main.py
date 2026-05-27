@@ -19,7 +19,7 @@ SUBSCRIPTIONS = [
         "group_name": "⬇️ОБХОД ЧЕРНЫХ СПИСКОВ⬇️"
     },
     {
-        "url": "https://key.prosvet.best/sub",
+        "url": "https://key.prosvet.best/sub?token=7976395871",
         "name_prefix": "⚪ Белые списки",
         "group_name": "⬇️ОБХОД БЕЛЫХ СПИСКОВ⬇️"
     },
